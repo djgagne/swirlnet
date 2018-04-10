@@ -10,8 +10,8 @@ def main():
     sub_vars = ["p", "row", "col", "lon", "lat", "i", "j", "masks", "time",
                 "track_id", "track_step", "RVORT1_MAX_curr", "REFL_COM_prev",
                 "PSFC_prev", "T2_prev", "TD2_prev", "U10_prev", "V10_prev"]
-    n_proc = 5
-    pool = Pool(n_proc, maxtasksperchild=1)
+    n_proc = 8
+    pool = Pool(n_proc, maxtasksperchild=100)
     nc_files = sorted(glob(join(in_path, "*.nc")))
     for nc_file in nc_files:
         pool.apply_async(reduce_nc_file, (nc_file, sub_vars, out_path))
@@ -19,6 +19,7 @@ def main():
     pool.join()
 
 def reduce_nc_file(filename, sub_vars, out_path):
+    print("start", filename)
     file_end = filename.split("/")[-1]
     storm_obj = xr.open_dataset(filename)
     enc_dict = dict()
